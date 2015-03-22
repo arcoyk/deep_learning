@@ -1,0 +1,59 @@
+!obj:pylearn2.train.Train {
+    dataset: &train !pkl: "train.pkl",
+
+    model: !obj:pylearn2.models.mlp.MLP {
+        batch_size: 1,
+        layers: [
+                 !obj:pylearn2.models.mlp.PretrainedLayer {
+                     layer_name: 'h1',
+                     layer_content: !pkl: "DAE_l1.pkl"
+                 },
+                 !obj:pylearn2.models.mlp.PretrainedLayer {
+                     layer_name: 'h2',
+                     layer_content: !pkl: "DAE_l2.pkl"
+                 },
+                 !obj:pylearn2.models.mlp.Softmax {
+                     layer_name: 'y',
+                     n_classes: 2,
+                     irange: 0.05
+                 }
+                ],
+        nvis: 25
+    },
+    algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
+        learning_rate: .05,
+        learning_rule: !obj:pylearn2.training_algorithms.learning_rule.Momentum {
+            init_momentum: .5,
+        },
+        monitoring_dataset:
+            {
+                'valid' : *train,
+            },
+        cost: !obj:pylearn2.costs.mlp.Default {},
+        termination_criterion: !obj:pylearn2.termination_criteria.And {
+            criteria: [
+                !obj:pylearn2.termination_criteria.MonitorBased {
+                    channel_name: "valid_y_misclass",
+                    prop_decrease: 0.,
+                    N: 100
+                },
+                !obj:pylearn2.termination_criteria.EpochCounter {
+                    max_epochs: 50
+                }
+            ]
+        },
+        update_callbacks: !obj:pylearn2.training_algorithms.sgd.ExponentialDecay {
+            decay_factor: 1.00004,
+            min_lr: .000001
+        }
+    },
+    extensions: [
+        !obj:pylearn2.training_algorithms.learning_rule.MomentumAdjustor {
+            start: 1,
+            saturate: 250,
+            final_momentum: .7
+        }
+    ],
+    save_path: "mlp.pkl",
+    save_freq: 1
+}
