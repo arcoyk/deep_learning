@@ -2,8 +2,8 @@
     dataset: &train !pkl: "train.pkl",
 
     model: !obj:pylearn2.models.autoencoder.DenoisingAutoencoder {
-        nvis: 25,
-        nhid: 1152,
+        nvis: 16,
+        nhid: 20,
         irange: 0.05,
         corruptor: !obj:pylearn2.corruption.BinomialCorruptor {
             corruption_level: .1,
@@ -13,12 +13,12 @@
     },
     algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
         learning_rate: 1e-3,
-        batch_size: 1,
+        batch_size: 2,
         monitoring_batches: 1,
         monitoring_dataset: *train,
         cost: !obj:pylearn2.costs.autoencoder.MeanSquaredReconstructionError {},
         termination_criterion: !obj:pylearn2.termination_criteria.EpochCounter {
-            max_epochs: 10,
+            max_epochs: 2,
         },
     },
     save_path: "DAE_l1.pkl",

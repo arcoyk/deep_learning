@@ -2,7 +2,7 @@
     dataset: &train !pkl: "train.pkl",
 
     model: !obj:pylearn2.models.mlp.MLP {
-        batch_size: 1,
+        batch_size: 2,
         layers: [
                  !obj:pylearn2.models.mlp.PretrainedLayer {
                      layer_name: 'h1',
@@ -18,7 +18,7 @@
                      irange: 0.05
                  }
                 ],
-        nvis: 25
+        nvis: 16
     },
     algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
         learning_rate: .05,
@@ -38,7 +38,7 @@
                     N: 100
                 },
                 !obj:pylearn2.termination_criteria.EpochCounter {
-                    max_epochs: 50
+                    max_epochs: 2
                 }
             ]
         },

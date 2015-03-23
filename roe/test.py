@@ -20,4 +20,4 @@ def score(dataset, model, input_size):
 
 model = pickle.load(open('mlp.pkl'))
 test_data = pickle.load(open('test.pkl'))
-score(test_data, model, 25)
+score(test_data, model, 16)
